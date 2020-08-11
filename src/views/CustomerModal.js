@@ -56,7 +56,6 @@ class CustomerModal extends React.Component {
   render(){
     const {showModal,showModalwithCustomer,customer}= this.props
     const {firstName,lastName,phone} = this.state
-    console.log(this.props);
     return(
       <Modal open={showModal} toggle={()=>{showModalwithCustomer(false,null);this.setState({...initialState})}}>
         <ModalHeader>{customer?"Edit":"Add"} Customer</ModalHeader>

@@ -6,7 +6,8 @@ import {connect} from "react-redux"
 import {fetchCustomers,deleteCustomer} from "../actionCreators"
 
 const TableRow = (props) => {
-  const {index,id,name,lastname,phone,showModalwithCustomer} = props
+  const {index,id,name,lastname,phone,showModalwithCustomer,deleteCustomer} = props
+  console.log(props);
   return (
     <tr>
       <td>{index+1}</td>
@@ -16,7 +17,7 @@ const TableRow = (props) => {
       <td align="right">
         <Button outline className="mb-2 mr-1" theme="success">Appoitment</Button>
         <Button onClick={()=>showModalwithCustomer(true,id)} outline className="mb-2 mr-1" theme="info">Edit</Button>
-        <Button outline className="mb-2 mr-1" theme="danger">Delete</Button>
+        <Button onClick={()=>deleteCustomer(id)} outline className="mb-2 mr-1" theme="danger">Delete</Button>
       </td>
     </tr>
   )
@@ -44,9 +45,20 @@ class Customer extends React.Component{
     this.props.fetchCustomers()
   }
 
+  filterCustomers = (customers)=>{
+    const filter = this.state.filter.toLowerCase() 
+    const customersToBeDisplay = customers.filter(customer => {
+      const {name,lastname,phone} = customer
+      if (name.toLowerCase().includes(filter) || lastname.toLowerCase().includes(filter) || phone.includes(filter)){
+        return customer
+      }
+    })
+    return customersToBeDisplay
+  }
+
   render (){
-    const {customers} = this.props
-    const customerToBeEdited = customers.find( x => x.id === this.state.customerId)
+    const customersToBeDisplay = this.filterCustomers(this.props.customers)
+    const customerToBeEdited = customersToBeDisplay.find( x => x.id === this.state.customerId)
     return (
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
@@ -99,11 +111,12 @@ class Customer extends React.Component{
                     </tr>
                   </thead>
                   <tbody>
-                    {customers.map((customer,index) => (
+                    {customersToBeDisplay.map((customer,index) => (
                         <TableRow 
                         key={customer.id} 
                         index={index}
                         {...customer} 
+                        deleteCustomer={this.props.deleteCustomer}
                         showModalwithCustomer={this.showModalwithCustomer}/>
                       )
                     )}
