@@ -10,23 +10,32 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./shards-dashboard/styles/shards-dashboards.1.1.0.min.css";
 import Dashboard from './views/Dashboard';
 import Auth from './views/Auth';
+import {connect} from "react-redux"
 
 
-function App() {
+function App( props) {
+  const {user} = props
   return (
     <Router basename={process.env.REACT_APP_BASENAME || ""}>
       <Switch>
         <Route path="/" exact render={(props) =>(<Redirect to="/dashboard"/>)}/>
-        <Route path="/auth" exact render={(props) =>(<Auth {...props}/>)}/>
-        <Route path="/dashboard" exact render={(props) =>(<DefaultLayout ><Dashboard {...props}/></DefaultLayout>)}/>
-        <Route path="/profile" exact render={(props) =>(<DefaultLayout ><UserProfile {...props}/></DefaultLayout>)}/>
-        <Route path="/customers" exact render={(props) =>(<DefaultLayout ><Customer {...props}/></DefaultLayout>)}/>
-        <Route path="/appointments" exact render={(props) =>(<DefaultLayout ><Appointment {...props}/></DefaultLayout>)}/>
-        <Route path="/appointments/new/:id" exact render={(props) =>(<DefaultLayout ><Appointment {...props}/></DefaultLayout>)}/>
+        <Route path="/auth" exact render={(props) =>(!user ? <Auth {...props}/> :<Redirect to="/dashboard"/>)}/>
+        <Route path="/dashboard" exact render={(props) =>(user ? <DefaultLayout ><Dashboard {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
+        <Route path="/profile" exact render={(props) =>(user ? <DefaultLayout ><UserProfile {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
+        <Route path="/customers" exact render={(props) =>(user ? <DefaultLayout ><Customer {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
+        <Route path="/appointments" exact render={(props) =>(user ? <DefaultLayout ><Appointment {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
+        <Route path="/appointments/new/:id" exact render={(props) =>(user ? <DefaultLayout ><Appointment {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
         <Route path="*" exact render={(props) =>(<Errors/>)}/>
       </Switch>
     </Router>
   )
 }
 
-export default App;
+const msp = state => {
+  return {
+    user:state.user
+  }
+}
+
+
+export default connect(msp)(App);

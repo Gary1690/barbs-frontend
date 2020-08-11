@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {connect} from 'react-redux'
+import {logout} from "../../../../actionCreators"
 import {
   Dropdown,
   DropdownToggle,
@@ -10,7 +12,7 @@ import {
   NavLink
 } from "shards-react";
 
-export default class UserActions extends React.Component {
+class UserActions extends React.Component {
   constructor(props) {
     super(props);
 
@@ -28,6 +30,7 @@ export default class UserActions extends React.Component {
   }
 
   render() {
+    const {user} = this.props
     return (
       <NavItem tag={Dropdown} caret toggle={this.toggleUserActions}>
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
@@ -36,14 +39,14 @@ export default class UserActions extends React.Component {
             src="https://ca.slack-edge.com/T02MD9XTF-U0130BRMJD8-cb4df1a405fd-512"
             alt="User Avatar"
           />{" "}
-          <span className="d-none d-md-inline-block">Sierra Brooks</span>
+          <span className="d-none d-md-inline-block">{this.props.user? `${user.name} ${user.lastname}` :"No user"}</span>
         </DropdownToggle>
         <Collapse tag={DropdownMenu} right small open={this.state.visible}>
           <DropdownItem tag={Link} to="/profile">
             <i className="material-icons">&#xE7FD;</i> Profile
           </DropdownItem>
           <DropdownItem divider />
-          <DropdownItem as={Link} to="/" className="text-danger">
+          <DropdownItem onClick={()=>this.props.logout()} as={Link} to="/" className="text-danger">
             <i className="material-icons text-danger">&#xE879;</i> Logout
           </DropdownItem>
         </Collapse>
@@ -51,3 +54,17 @@ export default class UserActions extends React.Component {
     );
   }
 }
+const msp = (state) => {
+  return {
+    user:state.user
+  }
+}
+
+const mdp = (dispatch) => {
+  return {
+    logout: () => dispatch(logout())
+  }
+}
+
+
+export default connect(msp,mdp)(UserActions)

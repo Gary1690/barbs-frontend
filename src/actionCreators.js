@@ -1,5 +1,7 @@
 const API = "http://localhost:3000/";
 const CUSTOMERS = `${API}customers`
+const APPOINTMENTS = `${API}appointments`
+const USERS = `${API}users`
 
 
 const fetchCustomers = ( ) => dispatch => {
@@ -34,9 +36,45 @@ const deleteCustomer = (id)=> dispatch => {
   .then(customer => dispatch({type:"DELETE_CUSTOMER",payload:{customerId:customer.id}}))
 }
 
+const addAppointment = (appointment) => dispatch =>{
+  fetch(APPOINTMENTS,{
+    method:"POST",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+    },
+    body: JSON.stringify(appointment)
+  }).then(r=>r.json())
+  .then(appointment => console.log(appointment))
+}
+
+const login = (userInfo,history) => dispatch =>{
+  fetch(`${USERS}/login`,{
+    method:"POST",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+    },
+    body: JSON.stringify(userInfo)
+  }).then(r=>r.json())
+  .then(userInfo =>{
+    if (userInfo.error){
+      alert("Error in the credentials")
+    }else{
+      dispatch({type:"LOGIN",payload:{user:userInfo.user,appointments:userInfo.appointments}})
+      history.push("/dashboard")
+    }
+    
+  })
+}
+
+const logout = ( ) => ({type:"LOGOUT"})
+
 
 export {
   fetchCustomers,
   saveCustomer,
-  deleteCustomer 
+  deleteCustomer,
+  login,
+  logout
 }

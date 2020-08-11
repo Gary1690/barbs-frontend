@@ -1,5 +1,7 @@
 import React from 'react'
 import {Row,Col, Card, CardHeader,ListGroup, ListGroupItem,Form,FormInput,Button} from "shards-react";
+import {login} from "../../actionCreators"
+import {connect} from "react-redux"
 
 const initialState = {
   username:"",
@@ -12,9 +14,14 @@ class Login  extends React.Component{
 
   handleChange =(e)=> this.setState({[e.target.name]:e.target.value})
 
+  handleSubmit = (e) =>{
+    e.preventDefault()
+    this.props.login(this.state,this.props.history)
+    this.setState({...initialState})
+  }
+
   render () {
     const {username,password} = this.state
-    console.log(this.state);
     return (
       <Card>
          <CardHeader className="border-bottom">
@@ -24,7 +31,7 @@ class Login  extends React.Component{
             <ListGroupItem className="p-3">
               <Row>
                 <Col>
-                  <Form>
+                  <Form onSubmit={this.handleSubmit} >
                     <Row form>
                       <Col className="form-group">
                         <label htmlFor="username">Username</label>
@@ -52,7 +59,7 @@ class Login  extends React.Component{
                       </Col>
                     </Row>
                     <Row form> 
-                      <Button type="button"  onClick={()=>this.props.showSignup(true)}  theme="secondary" className="mb-2 mr-1">&larr; Sign up</Button>
+                      <Button type="button" onClick={()=>this.props.showSignup(true)}  theme="secondary" className="mb-2 mr-1">&larr; Sign up</Button>
                       <Button type="button" onClick={()=>this.setState({...initialState})} theme="secondary" className="mb-2 mr-1">Clear</Button>
                       <Button type="submit" theme="accent" className="mb-2 mr-1">Login</Button>
                     </Row>
@@ -66,4 +73,10 @@ class Login  extends React.Component{
   }
 }
 
-export default Login;
+const mdp = (dispatch) => {
+  return {
+    login: (userInfo,history) => dispatch(login(userInfo,history))
+  }  
+}
+
+export default connect(null,mdp)(Login);

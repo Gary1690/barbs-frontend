@@ -17,9 +17,9 @@ const Auth = (props)=> {
           <div style={{marginTop:"10em"}}>
             {
               isSignup ?
-              <Signup showSignup={setIsSignup}/> 
+              <Signup {...props} showSignup={setIsSignup}/> 
               :
-              <Login showSignup={setIsSignup}/>
+              <Login {...props} showSignup={setIsSignup}/>
             }
           </div>
         </Col>

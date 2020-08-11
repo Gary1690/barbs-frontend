@@ -1,14 +1,25 @@
-import { Switch } from "react-router-dom"
+
 
 const initialState = {
   customers : [],
-  user:null,
+  user: JSON.parse(localStorage.getItem("user")),
+  appointments: localStorage.getItem("appointments")?JSON.parse(localStorage.getItem("appointments")): [],
   services:[] 
 }
+
 
 const reducer = (prevState = initialState,action) => {
     console.log(action);
     switch (action.type){
+      case "LOGOUT":
+        localStorage.setItem("user",null)
+        localStorage.setItem("appointments",null)
+        return {...prevState,user:null,appointments:[]}
+      case "LOGIN":
+        const {user,appointments} = action.payload
+        localStorage.setItem("user",JSON.stringify(user))
+        localStorage.setItem("appointments",JSON.stringify(appointments))
+        return {...prevState,user,appointments}
       case "DELETE_CUSTOMER":
         const updatedCustomers = prevState.customers.filter(c=>{
           if(c.id !== action.payload.customerId){

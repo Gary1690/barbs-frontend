@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from './event-utils'
+import { INITIAL_EVENTS } from './event-utils'
 import { Button,Card } from "shards-react";
 import InitTooltip from './tooltip-script'
 
@@ -12,12 +12,8 @@ export default class Calendar extends React.Component {
 
   calendarRef = React.createRef();
 
-  state = {
-    weekendsVisible: true,
-    currentEvents: []
-  }
-
   render() {
+    console.log(this.props);
     return (
       <Card small className="mb-4">
         <FullCalendar
@@ -31,9 +27,9 @@ export default class Calendar extends React.Component {
           initialView='dayGridMonth'
           editable={true}
           selectable={true}
-          selectMirror={true}
+          selectMirror={false}
           dayMaxEvents={true}
-          weekends={this.state.weekendsVisible}
+          weekends={true}
           initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
           select={this.handleDateSelect}
           eventContent={renderEventContent} // custom render function
@@ -79,39 +75,23 @@ export default class Calendar extends React.Component {
     InitTooltip(target,tooltip)
   }
 
-  handleWeekendsToggle = () => {
-    this.setState({
-      weekendsVisible: !this.state.weekendsVisible
-    })
-  }
-
   handleDateSelect = (selectInfo) => {
     if(selectInfo.view.type === "dayGridMonth"){
       this.calendarRef.current
       .getApi()
       .changeView("timeGridDay", selectInfo.start)
     }else{
-      
-      let title = prompt('Please enter a new title for your event')
-      let calendarApi = selectInfo.view.calendar
-  
-      calendarApi.unselect() // clear date selection
-  
-      if (title) {
-        calendarApi.addEvent({
-          id: createEventId(),
-          title,
-          start: selectInfo.startStr,
-          end: selectInfo.endStr,
-          allDay: selectInfo.allDay
-        })
-      }
-    }
-  }
+      if(this.props.match.params.id){
+        selectInfo.end.setHours(selectInfo.start.getHours()+1)
+        selectInfo.end.setMinutes(selectInfo.start.getMinutes())
+        const appointment = {
+          user_id: 1,
+          customer_id: parseInt(this.props.match.params.id),
+          start: selectInfo.start,
+          end: selectInfo.end
+        }
 
-  handleEventClick = (clickInfo) => {
-    if (window.confirm(`Are you sure you want to delete the event '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
+      }
     }
   }
 
@@ -126,7 +106,6 @@ export default class Calendar extends React.Component {
 
 
 function renderEventContent(eventInfo) {
-  console.log("eventinfo",eventInfo.event,eventInfo.event.id,eventInfo.el)
   return (
     <>
       <div style={{background:'#3688D8',color:"white",height:'100%'}} id={`eventToolTip${eventInfo.event.id}`}>

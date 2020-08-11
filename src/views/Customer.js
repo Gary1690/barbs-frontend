@@ -6,7 +6,7 @@ import {connect} from "react-redux"
 import {fetchCustomers,deleteCustomer} from "../actionCreators"
 
 const TableRow = (props) => {
-  const {index,id,name,lastname,phone,showModalwithCustomer,deleteCustomer} = props
+  const {index,id,name,lastname,phone,showModalwithCustomer,deleteCustomer,history} = props
   console.log(props);
   return (
     <tr>
@@ -15,7 +15,7 @@ const TableRow = (props) => {
       <td>{lastname}</td>
       <td>{phone}</td>
       <td align="right">
-        <Button outline className="mb-2 mr-1" theme="success">Appoitment</Button>
+        <Button onClick={()=>{history.push(`/appointments/new/${id}`)}} outline className="mb-2 mr-1" theme="success">Appoitment</Button>
         <Button onClick={()=>showModalwithCustomer(true,id)} outline className="mb-2 mr-1" theme="info">Edit</Button>
         <Button onClick={()=>deleteCustomer(id)} outline className="mb-2 mr-1" theme="danger">Delete</Button>
       </td>
@@ -113,6 +113,7 @@ class Customer extends React.Component{
                   <tbody>
                     {customersToBeDisplay.map((customer,index) => (
                         <TableRow 
+                        history = {this.props.history}
                         key={customer.id} 
                         index={index}
                         {...customer} 
