@@ -3,7 +3,7 @@ import {Form,FormInput,Container, Row, Col, Card, CardHeader, CardBody, Button }
 import PageTitle from "../components/common/PageTitle";
 import CustomerModal from "./CustomerModal";
 import {connect} from "react-redux"
-import {fetchCustomers} from "../actionCreators"
+import {fetchCustomers,deleteCustomer} from "../actionCreators"
 
 const TableRow = (props) => {
   const {index,id,name,lastname,phone,showModalwithCustomer} = props
@@ -129,7 +129,8 @@ const msp = state => {
 
 const mdp =dispatch=>{
   return{
-    fetchCustomers: () => dispatch(fetchCustomers())
+    fetchCustomers: () => dispatch(fetchCustomers()),
+    deleteCustomer: (id) => dispatch(deleteCustomer(id))
   }
 }
 export default connect(msp,mdp)(Customer);
