@@ -4,16 +4,23 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { INITIAL_EVENTS } from './event-utils'
-import { Button,Card } from "shards-react";
+import { Button,Card } from "shards-react"
 import InitTooltip from './tooltip-script'
+import {connect} from "react-redux"
+import {addAppointment,fetchCustomers} from "../../actionCreators"
 
 
-export default class Calendar extends React.Component {
+class Calendar extends React.Component {
 
   calendarRef = React.createRef();
 
+  componentDidMount(){
+    this.props.fetchCustomers()
+  }
+
   render() {
-    console.log(this.props);
+    console.log("calendar",this.props.appointments);
+    console.log("Initial",INITIAL_EVENTS );
     return (
       <Card small className="mb-4">
         <FullCalendar
@@ -23,16 +30,17 @@ export default class Calendar extends React.Component {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
           }}
+          eventOverlap={false}
           height="50em"
           initialView='dayGridMonth'
-          editable={true}
+          editable={false}//to be change
           selectable={true}
           selectMirror={false}
           dayMaxEvents={true}
           weekends={true}
-          initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+          initialEvents={this.props.appointments} // alternatively, use the `events` setting to fetch from a feed
           select={this.handleDateSelect}
-          eventContent={renderEventContent} // custom render function
+          eventContent={(eventInfo)=> this.renderEventContent(eventInfo)} // custom render function
           // eventClick={this.handleEventClick}
           eventDidMount = {this.handleEventMounting}
           eventsSet={this.handleEvents} // called after events are initialized/added/changed/removed
@@ -84,40 +92,50 @@ export default class Calendar extends React.Component {
       if(this.props.match.params.id){
         selectInfo.end.setHours(selectInfo.start.getHours()+1)
         selectInfo.end.setMinutes(selectInfo.start.getMinutes())
+        const customerId = parseInt(this.props.match.params.id)
         const appointment = {
           user_id: 1,
-          customer_id: parseInt(this.props.match.params.id),
+          customer_id: customerId,
           start: selectInfo.start,
-          end: selectInfo.end
+          end: selectInfo.end,
         }
-
+        this.props.addAppointment(appointment,this.calendarRef)
       }
     }
   }
-
-  handleEvents = (events) => {
-    this.setState({
-      currentEvents: events
-    })
+  renderEventContent= (eventInfo)=>{
+    const customer = this.props.customers.find(c=> c.id === parseInt(eventInfo.event.title))
+    return (
+      <>
+        <div style={{width:"100%", color:"white",fontSize:"1.2em",backgroundColor:'#3688D8'}} id={`eventToolTip${eventInfo.event.id}`}>
+        <b>{eventInfo.timeText} &nbsp; <i>{customer ? `${customer.name} ${customer.lastname}`: "No client"}</i></b> 
+          
+        </div>
+        <div className="calTooltip" role="tooltip">
+          <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="danger">Cancel</Button><br/>
+          <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>
+          <div className="calArrow" data-popper-arrow></div>
+        </div>
+      </>
+    )
   }
-
 }
 
 
-
-function renderEventContent(eventInfo) {
-  return (
-    <>
-      <div style={{background:'#3688D8',color:"white",height:'100%'}} id={`eventToolTip${eventInfo.event.id}`}>
-        <b>{eventInfo.timeText}</b>
-        <i>{eventInfo.event.title}</i>
-      </div>
-      <div className="calTooltip" role="tooltip">
-        <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="danger">Cancel</Button><br/>
-        <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>
-        <div className="calArrow" data-popper-arrow></div>
-      </div>
-    </>
-  )
+const msp = (state) => {
+  return {
+    user: state.user,
+    appointments: state.appointments,
+    customers: state.customers
+  }
 }
 
+const mdp = (dispatch) => {
+  return {
+    fetchCustomers: () => dispatch(fetchCustomers()),
+    addAppointment:(appointment,calendarRef)=> dispatch(addAppointment(appointment,calendarRef))
+  }
+}
+
+
+export default connect(msp,mdp)(Calendar);

@@ -14,7 +14,7 @@ export default function() {
     {
       title: "Customers",
       htmlBefore: '<i class="material-icons">note_add</i>',
-      to: "customers",
+      to: "/customers",
     },
     {
       title: "User Profile",

@@ -1,9 +1,10 @@
 
+let appointments = JSON.parse(localStorage.getItem("appointments"))
 
 const initialState = {
   customers : [],
   user: JSON.parse(localStorage.getItem("user")),
-  appointments: localStorage.getItem("appointments")?JSON.parse(localStorage.getItem("appointments")): [],
+  appointments: appointments? appointments : [],
   services:[] 
 }
 
@@ -11,6 +12,10 @@ const initialState = {
 const reducer = (prevState = initialState,action) => {
     console.log(action);
     switch (action.type){
+      case "ADD_APPOINTMENT":
+        const newAppointments = [...prevState.appointments,action.payload.appointment]
+        localStorage.setItem("appointments",JSON.stringify(newAppointments))
+        return {...prevState,appointments:newAppointments}
       case "LOGOUT":
         localStorage.setItem("user",null)
         localStorage.setItem("appointments",null)

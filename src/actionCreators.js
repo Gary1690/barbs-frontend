@@ -36,7 +36,7 @@ const deleteCustomer = (id)=> dispatch => {
   .then(customer => dispatch({type:"DELETE_CUSTOMER",payload:{customerId:customer.id}}))
 }
 
-const addAppointment = (appointment) => dispatch =>{
+const addAppointment = (appointment,calendarRef) => dispatch =>{
   fetch(APPOINTMENTS,{
     method:"POST",
     headers:{
@@ -45,7 +45,18 @@ const addAppointment = (appointment) => dispatch =>{
     },
     body: JSON.stringify(appointment)
   }).then(r=>r.json())
-  .then(appointment => console.log(appointment))
+  .then(app => {
+    const appointment = {
+      id:app.id,
+      customer_id: app.customer_id,
+      user_id: app.user_id,
+      start:new Date(app.start),
+      end:new Date(app.end),
+      title:`${app.customer_id}`
+    }
+    calendarRef.current.getApi().addEvent(appointment)
+    dispatch({type:"ADD_APPOINTMENT",payload:{appointment}})
+  })
 }
 
 const login = (userInfo,history) => dispatch =>{
@@ -61,7 +72,17 @@ const login = (userInfo,history) => dispatch =>{
     if (userInfo.error){
       alert("Error in the credentials")
     }else{
-      dispatch({type:"LOGIN",payload:{user:userInfo.user,appointments:userInfo.appointments}})
+      const appointments = userInfo.appointments.map(app=>{
+        return {
+          id:app.id,
+          customer_id: app.customer_id,
+          user_id: app.user_id,
+          start:new Date(app.start),
+          end:new Date(app.end),
+          title:`${app.customer_id}`
+        }
+      }) 
+      dispatch({type:"LOGIN",payload:{user:userInfo.user,appointments}})
       history.push("/dashboard")
     }
     
@@ -70,11 +91,26 @@ const login = (userInfo,history) => dispatch =>{
 
 const logout = ( ) => ({type:"LOGOUT"})
 
+const deleteAppointment = (id,calendarRef)=> dispatch => {
+  fetch(`${APPOINTMENTS}/${id}`,{
+    method:"DELETE",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+    }
+  }).then(r=> r.json())
+  .then(deletedAppointment=>{
+    console.log(deletedAppointment)
+  })
+}
+
 
 export {
   fetchCustomers,
   saveCustomer,
   deleteCustomer,
   login,
-  logout
+  logout,
+  addAppointment,
+  deleteAppointment
 }
