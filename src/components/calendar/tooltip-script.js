@@ -37,12 +37,19 @@ const hide = (tooltip) => {
   destroyTooltip();
 }
 
+const hideAllTooltips = ( ) => {
+  const Tooltips = document.querySelectorAll(".calTooltip") 
+  Tooltips.forEach(tooltip => hide(tooltip))
+}
+
+
 const InitTooltip = (target,tooltip )=>{
   target.addEventListener("click",()=> {
     debugger
     if (tooltip.hasAttribute("data-show")){
       hide(tooltip)
     }else{
+      hideAllTooltips()
       show(target,tooltip)
     }
   });

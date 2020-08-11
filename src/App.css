@@ -38,12 +38,13 @@
 }
 
 .calTooltip {
-  background: #333;
+  background: white;
   color: white;
   font-weight: bold;
   padding: 4px 8px;
   font-size: 13px;
   border-radius: 4px;
+  z-index:1000;
 }
 
 .calTooltip {
@@ -54,19 +55,19 @@
   display: block;
 }
 
-.calTooltip[data-popper-placement^='top'] > #arrow {
+.calTooltip[data-popper-placement='top'] > #arrow {
   bottom: -4px;
 }
 
-.calTooltip[data-popper-placement^='bottom'] > #arrow {
+.calTooltip[data-popper-placement='bottom'] > #arrow {
   top: -4px;
 }
 
-.calTooltip[data-popper-placement^='left'] > #arrow {
+.calTooltip[data-popper-placement='left'] > #arrow {
   right: -4px;
 }
 
-.calTooltip[data-popper-placement^='right'] > #arrow {
+.calTooltip[data-popper-placement='right'] > #arrow {
   left: -4px;
 }
 
@@ -81,5 +82,5 @@
 .calArrow::before {
   content: '';
   transform: rotate(45deg);
-  background: #333;
+  background: white;
 }
