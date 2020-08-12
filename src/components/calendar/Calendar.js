@@ -103,16 +103,25 @@ class Calendar extends React.Component {
     }
   }
   renderEventContent= (eventInfo)=>{
-    const customer = this.props.customers.find(c=> c.id === parseInt(eventInfo.event.title))
+    const {customer_id,status} = eventInfo.event.extendedProps
+    const color = eventInfo.event.backgroundColor
+ 
+    const customer = this.props.customers.find(c=> c.id === customer_id)
     return (
       <>
-        <div style={{width:"100%", color:"white",fontSize:"1.2em",backgroundColor:'#3688D8'}} id={`eventToolTip${eventInfo.event.id}`}>
+        <div style={{width:"100%", color:"white",fontSize:"1.2em",backgroundColor:color}} id={`eventToolTip${eventInfo.event.id}`}>
         <b>{eventInfo.timeText} &nbsp; <i>{customer ? `${customer.name} ${customer.lastname}`: "No client"}</i></b> 
           
         </div>
         <div className="calTooltip" role="tooltip">
+          {
+          !status 
+          && 
+          <>
           <Button onClick={()=>this.props.deleteAppointment(eventInfo.event._def.publicId,eventInfo.event)} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="danger">Cancel</Button><br/>
-          <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>
+          <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>}
+          </>
+          }
           <div className="calArrow" data-popper-arrow></div>
         </div>
       </>

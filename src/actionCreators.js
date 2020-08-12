@@ -52,7 +52,8 @@ const addAppointment = (appointment,calendarRef) => dispatch =>{
       user_id: app.user_id,
       start:new Date(app.start),
       end:new Date(app.end),
-      title:`${app.customer_id}`
+      title:`${app.customer_id}`,
+      color:"#3688D8"
     }
     calendarRef.current.getApi().addEvent(appointment)
     dispatch({type:"ADD_APPOINTMENT",payload:{appointment}})
@@ -79,7 +80,9 @@ const login = (userInfo,history) => dispatch =>{
           user_id: app.user_id,
           start:new Date(app.start),
           end:new Date(app.end),
-          title:`${app.customer_id}`
+          title:`${app.customer_id}`,
+          status: app.status,
+          color: app.status ? "#43C924" :"#3688D8"
         }
       }) 
       dispatch({type:"LOGIN",payload:{user:userInfo.user,appointments}})
@@ -105,6 +108,18 @@ const deleteAppointment = (id,event)=> dispatch => {
   })
 }
 
+const payAppointment = (appointmentId)=>dispatch=> {
+  fetch(`${APPOINTMENTS}/pay/${appointmentId}`,{
+    method:"DELETE",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+    }
+  }).then(r=> r.json())
+  .then(paidAppointment=>{
+    console.log(paidAppointment)
+  })
+}
 
 export {
   fetchCustomers,
