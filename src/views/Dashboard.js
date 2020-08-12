@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, CardHeader, CardBody, Button } from "shards-
 import {connect} from 'react-redux'
 import PageTitle from "./../components/common/PageTitle";
 import SmallStats from "./../components/common/SmallStats";
-import {fetchCustomers,deleteAppointment} from '../actionCreators'
+import {fetchCustomers,deleteAppointment,payAppointment} from '../actionCreators'
 
 
 class Dashboard extends React.Component {
@@ -99,7 +99,7 @@ class Dashboard extends React.Component {
                     {this.todayAppointments().length > 0 ? 
                     this.todayAppointments().map( (app,index)=>{
                       const customer =  this.props.customers.find(c=> c.id === app.customer_id)
-                      return <RenderTableContent deleteAppointment={this.props.deleteAppointment} key={app.id} index ={index} {...app} customer={customer}/>
+                      return <RenderTableContent payAppointment={this.props.payAppointment} deleteAppointment={this.props.deleteAppointment} key={app.id} index ={index} {...app} customer={customer}/>
                     })
                     : 
                     <tr> <td colSpan={5} style={{fontSize:"1.5em",textAlign:"center"}}>No Appointments today</td></tr>
@@ -139,7 +139,7 @@ class Dashboard extends React.Component {
 };
 
 const RenderTableContent = (props) => {
-  const {index,customer,start} = props
+  const {index,customer,start,status} = props
   const date = new Date(start)
   return(
     <tr>
@@ -148,8 +148,13 @@ const RenderTableContent = (props) => {
       <td>{customer && customer.lastname}</td>
       <td>{`${date.getHours()}:${date.getMinutes()?date.getMinutes():"00"}`}</td>
       <td>{customer && customer.phone}</td>
-      <td>
-        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
+      <td align="right">
+        <Button
+          onClick ={()=>props.payAppointment(props.id,null)} 
+          outline 
+          disabled={!!status}
+          className="mb-2 mr-1" 
+          theme="success">Pay</Button>
         {/* <Button outline className="mb-2 mr-1" theme="info">View</Button> */}
         <Button 
           onClick={()=>props.deleteAppointment(props.id,null)} 
@@ -238,7 +243,8 @@ const msp = (state) => {
 const mdp = (dispatch) => {
   return{
     fetchCustomers: () => dispatch(fetchCustomers()),
-    deleteAppointment: (id,event) => dispatch(deleteAppointment(id,event))
+    deleteAppointment: (id,event) => dispatch(deleteAppointment(id,event)),
+    payAppointment:(id,eventApi) => dispatch(payAppointment(id,eventApi))
   }
 }
 

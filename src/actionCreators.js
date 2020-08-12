@@ -53,6 +53,7 @@ const addAppointment = (appointment,calendarRef) => dispatch =>{
       start:new Date(app.start),
       end:new Date(app.end),
       title:`${app.customer_id}`,
+      status:app.status,
       color:"#3688D8"
     }
     calendarRef.current.getApi().addEvent(appointment)
@@ -108,16 +109,29 @@ const deleteAppointment = (id,event)=> dispatch => {
   })
 }
 
-const payAppointment = (appointmentId)=>dispatch=> {
+
+const payAppointment = (appointmentId,calendarRef)=>dispatch=> {
   fetch(`${APPOINTMENTS}/pay/${appointmentId}`,{
-    method:"DELETE",
+    method:"PATCH",
     headers:{
       'Content-Type':'application/json',
       'Accept':'application/json'
-    }
+    },
+    body:JSON.stringify({status:true})
   }).then(r=> r.json())
-  .then(paidAppointment=>{
-    console.log(paidAppointment)
+  .then(app => {
+    const appointment = {
+      id:app.id,
+      customer_id: app.customer_id,
+      user_id: app.user_id,
+      start:new Date(app.start),
+      end:new Date(app.end),
+      title:`${app.customer_id}`,
+      status:app.status,
+      color:"#43C924"
+    }
+    dispatch({type:"PAY_APPOINTMENT",payload:{appointment}})
+   
   })
 }
 
@@ -128,5 +142,6 @@ export {
   login,
   logout,
   addAppointment,
-  deleteAppointment
+  deleteAppointment,
+  payAppointment
 }

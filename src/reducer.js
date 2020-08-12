@@ -11,19 +11,29 @@ const initialState = {
 
 const reducer = (prevState = initialState,action) => {
     console.log(action);
+    let newAppointmentsArr = null;
     switch (action.type){
+      case "PAY_APPOINTMENT":
+        newAppointmentsArr = prevState.appointments.map( app =>{
+          if(app.id === action.payload.appointment.id){
+            return action.payload.appointment
+          }
+          return app
+        })
+        localStorage.setItem("appointments",JSON.stringify(newAppointmentsArr))
+        return {...prevState,appointments:newAppointmentsArr}
       case "DELETE_APPOINTMENT":
-        const filterAppointments = prevState.appointments.filter( app => {
+        newAppointmentsArr = prevState.appointments.filter( app => {
           if(app.id !== action.payload.appointment.id){
             return app
           }
         })
-        localStorage.setItem("appointments",JSON.stringify(filterAppointments))
-        return {...prevState,appointments:filterAppointments}
+        localStorage.setItem("appointments",JSON.stringify(newAppointmentsArr))
+        return {...prevState,appointments:newAppointmentsArr}
       case "ADD_APPOINTMENT":
-        const newAppointments = [...prevState.appointments,action.payload.appointment]
-        localStorage.setItem("appointments",JSON.stringify(newAppointments))
-        return {...prevState,appointments:newAppointments}
+        newAppointmentsArr = [...prevState.appointments,action.payload.appointment]
+        localStorage.setItem("appointments",JSON.stringify(newAppointmentsArr))
+        return {...prevState,appointments:newAppointmentsArr}
       case "LOGOUT":
         localStorage.setItem("user",null)
         localStorage.setItem("appointments",null)

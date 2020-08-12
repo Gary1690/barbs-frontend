@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { Button,Card } from "shards-react"
 import InitTooltip from './tooltip-script'
 import {connect} from "react-redux"
-import {addAppointment,fetchCustomers,deleteAppointment} from "../../actionCreators"
+import {addAppointment,fetchCustomers,deleteAppointment,payAppointment} from "../../actionCreators"
 
 
 class Calendar extends React.Component {
@@ -18,8 +18,13 @@ class Calendar extends React.Component {
     console.log("Ref",this.calendarRef.current.getApi().remove);
   }
 
+  componentDidUpdate(prevProps){
+    console.log("PreProps", prevProps);
+    console.log("CurrentProps", this.props);
+  }
+
   render() {
-    console.log("calendar",this.props.appointments);
+    console.log("calendar",this.props);
     
     return (
       <Card small className="mb-4">
@@ -38,13 +43,14 @@ class Calendar extends React.Component {
           selectMirror={false}
           dayMaxEvents={true}
           weekends={true}
-          initialEvents={this.props.appointments} // alternatively, use the `events` setting to fetch from a feed
           select={this.handleDateSelect}
           eventContent={(eventInfo)=> this.renderEventContent(eventInfo)} // custom render function
           eventDidMount = {this.handleEventMounting}
           eventsSet={this.handleEvents} 
           eventChange={this.handleEventChange}
           ref={this.calendarRef}
+          events= {this.props.appointments} 
+          
           businessHours ={ [ // specify an array instead
             {
               daysOfWeek: [ 1, 2, 3, 4,5], // Monday, Tuesday, Wednesday, Thursday, Friday
@@ -66,6 +72,8 @@ class Calendar extends React.Component {
     )
   }
   
+  
+
   handleEventClick = (args) =>{
     console.log(args);
   }
@@ -75,6 +83,7 @@ class Calendar extends React.Component {
   }
 
   handleEventMounting = (info) => {
+    console.log(info.event.extendedProps);
     info.el.id = `eventToolTip${info.event.id}`
     info.el.setAttribute("aria-describedby", "tooltip")
     const target = info.el
@@ -119,10 +128,10 @@ class Calendar extends React.Component {
           && 
           <>
           <Button onClick={()=>this.props.deleteAppointment(eventInfo.event._def.publicId,eventInfo.event)} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="danger">Cancel</Button><br/>
-          <Button style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>}
+          <Button onClick={()=>{this.props.payAppointment(eventInfo.event._def.publicId,this.calendarRef)}} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>}
+          <div className="calArrow" data-popper-arrow></div>
           </>
           }
-          <div className="calArrow" data-popper-arrow></div>
         </div>
       </>
     )
@@ -142,7 +151,8 @@ const mdp = (dispatch) => {
   return {
     fetchCustomers: () => dispatch(fetchCustomers()),
     addAppointment:(appointment,calendarRef)=> dispatch(addAppointment(appointment,calendarRef)),
-    deleteAppointment: (id,calendarRef) => dispatch(deleteAppointment(id,calendarRef))
+    deleteAppointment: (id,eventApi) => dispatch(deleteAppointment(id,eventApi)),
+    payAppointment:(id,eventApi) => dispatch(payAppointment(id,eventApi))
   }
 }
 
