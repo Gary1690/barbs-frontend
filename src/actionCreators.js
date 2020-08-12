@@ -91,7 +91,7 @@ const login = (userInfo,history) => dispatch =>{
 
 const logout = ( ) => ({type:"LOGOUT"})
 
-const deleteAppointment = (id,calendarRef)=> dispatch => {
+const deleteAppointment = (id,event)=> dispatch => {
   fetch(`${APPOINTMENTS}/${id}`,{
     method:"DELETE",
     headers:{
@@ -100,7 +100,8 @@ const deleteAppointment = (id,calendarRef)=> dispatch => {
     }
   }).then(r=> r.json())
   .then(deletedAppointment=>{
-    console.log(deletedAppointment)
+    event && event.remove()
+    dispatch({type:"DELETE_APPOINTMENT",payload:{appointment:deletedAppointment}})
   })
 }
 

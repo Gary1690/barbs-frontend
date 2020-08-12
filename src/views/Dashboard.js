@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, CardHeader, CardBody, Button } from "shards-
 import {connect} from 'react-redux'
 import PageTitle from "./../components/common/PageTitle";
 import SmallStats from "./../components/common/SmallStats";
-import {fetchCustomers} from '../actionCreators'
+import {fetchCustomers,deleteAppointment} from '../actionCreators'
 
 
 class Dashboard extends React.Component {
@@ -13,7 +13,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    const smallStats = this.props.smallStats
     return (
       <Container fluid className="main-content-container px-4">
         {/* Page Header */}
@@ -23,21 +23,46 @@ class Dashboard extends React.Component {
   
         {/* Small Stats Blocks */}
         <Row>
-          {this.props.smallStats.map((stats, idx) => (
-            <Col className="col-lg mb-4" key={idx} {...stats.attrs}>
-              <SmallStats
-                id={`small-stats-${idx}`}
-                variation="1"
-                chartData={stats.datasets}
-                chartLabels={stats.chartLabels}
-                label={stats.label}
-                value={stats.value}
-                percentage={stats.percentage}
-                increase={stats.increase}
-                decrease={stats.decrease}
-              />
-            </Col>
-          ))}
+        
+          <Col className="col-lg mb-4"  {...smallStats[0].attrs}>
+            <SmallStats
+              id={`small-stats-${1}`}
+              variation="1"
+              chartData={smallStats[0].datasets}
+              chartLabels={smallStats[0].chartLabels}
+              label={smallStats[0].label}
+              value={this.todayAppointments().length}
+              percentage={smallStats[0].percentage}
+              increase={smallStats[0].increase}
+              decrease={smallStats[0].decrease}
+            />
+          </Col>
+          <Col className="col-lg mb-4"  {...smallStats[1].attrs}>
+            <SmallStats
+              id={`small-stats-${2}`}
+              variation="1"
+              chartData={smallStats[1].datasets}
+              chartLabels={smallStats[1].chartLabels}
+              label={smallStats[1].label}
+              value={this.MonthAppointments(new Date().getMonth()).length}
+              percentage={smallStats[1].percentage}
+              increase={smallStats[1].increase}
+              decrease={smallStats[1].decrease}
+            />
+          </Col>
+          <Col className="col-lg mb-4"  {...smallStats[2].attrs}>
+            <SmallStats
+              id={`small-stats-${2}`}
+              variation="1"
+              chartData={smallStats[2].datasets}
+              chartLabels={smallStats[2].chartLabels}
+              label={smallStats[2].label}
+              value={this.MonthAppointments(new Date().getMonth() -1 ).length}
+              percentage={smallStats[2].percentage}
+              increase={smallStats[2].increase}
+              decrease={smallStats[2].decrease}
+            />
+          </Col>
         </Row>
         
         <Row>
@@ -71,54 +96,14 @@ class Dashboard extends React.Component {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Ali</td>
-                      <td>Kerry</td>
-                      <td>Russian Federation</td>
-                      <td>107-0339</td>
-                      <td>
-                        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
-                        <Button outline className="mb-2 mr-1" theme="info">View</Button>
-                        <Button outline className="mb-2 mr-1" theme="danger">Cancel</Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Clark</td>
-                      <td>Angela</td>
-                      <td>Estonia</td>
-                      <td>1-660-850-1647</td>
-                      <td>
-                        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
-                        <Button outline className="mb-2 mr-1" theme="info">View</Button>
-                        <Button outline className="mb-2 mr-1" theme="danger">Cancel</Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Jerry</td>
-                      <td>Nathan</td>
-                      <td>Cyprus</td>
-                      <td>214-4225</td>
-                      <td>
-                        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
-                        <Button outline className="mb-2 mr-1" theme="info">View</Button>
-                        <Button outline className="mb-2 mr-1" theme="danger">Cancel</Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td>Colt</td>
-                      <td>Angela</td>
-                      <td>Liberia</td>
-                      <td>1-848-473-7416</td>
-                      <td>
-                        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
-                        <Button outline className="mb-2 mr-1" theme="info">View</Button>
-                        <Button outline className="mb-2 mr-1" theme="danger">Cancel</Button>
-                      </td>
-                    </tr>
+                    {this.todayAppointments().length > 0 ? 
+                    this.todayAppointments().map( (app,index)=>{
+                      const customer =  this.props.customers.find(c=> c.id === app.customer_id)
+                      return <RenderTableContent deleteAppointment={this.props.deleteAppointment} key={app.id} index ={index} {...app} customer={customer}/>
+                    })
+                    : 
+                    <tr> <td colSpan={5} style={{fontSize:"1.5em",textAlign:"center"}}>No Appointments today</td></tr>
+                    }
                   </tbody>
                 </table>
               </CardBody>
@@ -128,7 +113,53 @@ class Dashboard extends React.Component {
       </Container>
     )
   }
+
+  todayAppointments = ()=>{
+    const start = new Date()
+    start.setHours(0)
+    const end = new Date()
+    end.setHours(23)
+    return this.props.appointments.filter( app => {
+      const date = new Date (app.start)
+      if(start < date && end > date){
+        return app
+      }
+    })
+  }
+
+  MonthAppointments = (month) => {
+    return this.props.appointments.filter( app => {
+      const date = new Date (app.start)
+      if(month === date.getMonth()){
+        return app
+      }
+    })
+  }
+
 };
+
+const RenderTableContent = (props) => {
+  const {index,customer,start} = props
+  const date = new Date(start)
+  return(
+    <tr>
+      <td>{index+1}</td>
+      <td>{customer && customer.name}</td>
+      <td>{customer && customer.lastname}</td>
+      <td>{`${date.getHours()}:${date.getMinutes()?date.getMinutes():"00"}`}</td>
+      <td>{customer && customer.phone}</td>
+      <td>
+        <Button outline className="mb-2 mr-1" theme="success">Pay</Button>
+        {/* <Button outline className="mb-2 mr-1" theme="info">View</Button> */}
+        <Button 
+          onClick={()=>props.deleteAppointment(props.id,null)} 
+          outline 
+          className="mb-2 mr-1" 
+          theme="danger">Cancel</Button>
+      </td>
+    </tr>
+  )
+}
 
 Dashboard.propTypes = {
   /**
@@ -206,7 +237,8 @@ const msp = (state) => {
 
 const mdp = (dispatch) => {
   return{
-    fetchCustomers: () => dispatch(fetchCustomers())
+    fetchCustomers: () => dispatch(fetchCustomers()),
+    deleteAppointment: (id,event) => dispatch(deleteAppointment(id,event))
   }
 }
 

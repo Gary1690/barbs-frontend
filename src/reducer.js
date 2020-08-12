@@ -12,6 +12,14 @@ const initialState = {
 const reducer = (prevState = initialState,action) => {
     console.log(action);
     switch (action.type){
+      case "DELETE_APPOINTMENT":
+        const filterAppointments = prevState.appointments.filter( app => {
+          if(app.id !== action.payload.appointment.id){
+            return app
+          }
+        })
+        localStorage.setItem("appointments",JSON.stringify(filterAppointments))
+        return {...prevState,appointments:filterAppointments}
       case "ADD_APPOINTMENT":
         const newAppointments = [...prevState.appointments,action.payload.appointment]
         localStorage.setItem("appointments",JSON.stringify(newAppointments))

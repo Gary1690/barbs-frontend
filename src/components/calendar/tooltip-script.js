@@ -45,7 +45,6 @@ const hideAllTooltips = ( ) => {
 
 const InitTooltip = (target,tooltip )=>{
   target.addEventListener("click",()=> {
-    debugger
     if (tooltip.hasAttribute("data-show")){
       hide(tooltip)
     }else{
