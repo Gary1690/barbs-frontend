@@ -33,23 +33,28 @@ class UserAccountDetails extends React.Component{
         lastname:this.props.user.lastname,
         email:this.props.user.email,
         username:this.props.user.username,
-        picture:"",
+        picture:null,
         password:"",
         confirm:""
       })
   } 
 
+  handleFileChange = (e) => this.setState({[e.target.name]:e.target.files[0]})
   handleChange = (e) => this.setState({[e.target.name]:e.target.value})
 
   handleProfileFormSubmit = (e) =>{
-    debugger
     e.preventDefault()
     this.props.updateProfile(this.props.user.id, this.state)
   }
 
   handlePasswordFormSubmit = (e) =>{
     e.preventDefault()
-    
+    const {password,confirm} = this.state
+    if(password === confirm){
+      this.props.updatePassword(this.props.user.id,password)
+    }else{
+      alert("Passwords did not match")
+    }
   }
 
   render(){
@@ -65,7 +70,7 @@ class UserAccountDetails extends React.Component{
             <ListGroupItem className="p-3">
               <Row>
                 <Col>
-                  <Form onSubtmit={this.handleProfileFormSubmit}>
+                  <Form onSubmit={this.handleProfileFormSubmit}>
                     <Row form>
                       {/* First Name */}
                       <Col md="6" className="form-group">
@@ -128,9 +133,8 @@ class UserAccountDetails extends React.Component{
                           type="file"
                           id="picture"
                           name="picture"
-                          value={picture}
-                          onChange={this.handleChange}
-                          required={true}
+                          
+                          onChange={this.handleFileChange}
                         />
                       </Col>
                     </Row>
@@ -145,8 +149,8 @@ class UserAccountDetails extends React.Component{
             <ListGroupItem className="p-3">
               <Row>
                 <Col>
-                  <Form onSubtmit={this.handlePasswordFormSubmit}>
-                  <Row form onSubtmit>
+                  <Form onSubmit={this.handlePasswordFormSubmit}>
+                  <Row form>
                       {/* Password */}
                       <Col md="6" className="form-group">
                         <label htmlFor="password">Password</label>

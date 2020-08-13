@@ -107,7 +107,7 @@ class Calendar extends React.Component {
           start: selectInfo.start,
           end: selectInfo.end,
         }
-        this.props.addAppointment(appointment,this.calendarRef)
+        this.props.addAppointment(appointment)
       }
     }
   }
@@ -150,7 +150,7 @@ const msp = (state) => {
 const mdp = (dispatch) => {
   return {
     fetchCustomers: () => dispatch(fetchCustomers()),
-    addAppointment:(appointment,calendarRef)=> dispatch(addAppointment(appointment,calendarRef)),
+    addAppointment:(appointment)=> dispatch(addAppointment(appointment)),
     deleteAppointment: (id,eventApi) => dispatch(deleteAppointment(id,eventApi)),
     payAppointment:(id,eventApi) => dispatch(payAppointment(id,eventApi))
   }

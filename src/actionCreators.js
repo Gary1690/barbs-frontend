@@ -36,7 +36,7 @@ const deleteCustomer = (id)=> dispatch => {
   .then(customer => dispatch({type:"DELETE_CUSTOMER",payload:{customerId:customer.id}}))
 }
 
-const addAppointment = (appointment,calendarRef) => dispatch =>{
+const addAppointment = (appointment) => dispatch =>{
   fetch(APPOINTMENTS,{
     method:"POST",
     headers:{
@@ -56,7 +56,6 @@ const addAppointment = (appointment,calendarRef) => dispatch =>{
       status:app.status,
       color:"#3688D8"
     }
-    calendarRef.current.getApi().addEvent(appointment)
     dispatch({type:"ADD_APPOINTMENT",payload:{appointment}})
   })
 }
@@ -150,18 +149,23 @@ const updatePassword =(id,password)=>dispatch=>{
 }
 
 const updateProfile =(id,{name,lastname,email,username,picture})=>dispatch=>{
-  // fetch(`USERS/${id}`,{
-  //   method:"PATCH",
-  //   headers:{
-  //     'Content-Type':'application/json',
-  //     'Accept': 'application/json'
-  //   },
-  //   body:JSON.stringify({password})
-  // }).then(r=>r.json())
-  // .then(user => {
-  //   dispatch({type:"UPDATE_PASSWORD",payload:{user}})
-  // })
-  debugger
+  fetch(`${USERS}/login`,{
+    method:"PATCH",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept':'application/json'
+    },
+    body:JSON.stringify({
+      name,
+      lastname,
+      email,
+      username,
+      picture
+    })
+  }).then(r=>r.json())
+  .then( user => {
+    dispatch({type:"UPDATE_PROFILE",payload:{user}})
+  })
 }
 
 export {
