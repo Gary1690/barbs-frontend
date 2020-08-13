@@ -1,7 +1,7 @@
-const API = "http://localhost:3000/";
-const CUSTOMERS = `${API}customers`
-const APPOINTMENTS = `${API}appointments`
-const USERS = `${API}users`
+const API = "http://localhost:3000";
+const CUSTOMERS = `${API}/customers`
+const APPOINTMENTS = `${API}/appointments`
+const USERS = `${API}/users`
 
 
 const fetchCustomers = ( ) => dispatch => {
@@ -135,6 +135,35 @@ const payAppointment = (appointmentId,calendarRef)=>dispatch=> {
   })
 }
 
+const updatePassword =(id,password)=>dispatch=>{
+  fetch(`USERS/${id}`,{
+    method:"PATCH",
+    headers:{
+      'Content-Type':'application/json',
+      'Accept': 'application/json'
+    },
+    body:JSON.stringify({password})
+  }).then(r=>r.json())
+  .then(user => {
+    dispatch({type:"UPDATE_PASSWORD",payload:{user}})
+  })
+}
+
+const updateProfile =(id,{name,lastname,email,username,picture})=>dispatch=>{
+  // fetch(`USERS/${id}`,{
+  //   method:"PATCH",
+  //   headers:{
+  //     'Content-Type':'application/json',
+  //     'Accept': 'application/json'
+  //   },
+  //   body:JSON.stringify({password})
+  // }).then(r=>r.json())
+  // .then(user => {
+  //   dispatch({type:"UPDATE_PASSWORD",payload:{user}})
+  // })
+  debugger
+}
+
 export {
   fetchCustomers,
   saveCustomer,
@@ -143,5 +172,7 @@ export {
   logout,
   addAppointment,
   deleteAppointment,
-  payAppointment
+  payAppointment,
+  updateProfile,
+  updatePassword
 }

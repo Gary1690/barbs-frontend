@@ -13,6 +13,7 @@ import {
   FormInput,
   Button
 } from "shards-react";
+import { updateProfile, updatePassword } from "../../actionCreators";
 
 class UserAccountDetails extends React.Component{
   state = {
@@ -40,6 +41,17 @@ class UserAccountDetails extends React.Component{
 
   handleChange = (e) => this.setState({[e.target.name]:e.target.value})
 
+  handleProfileFormSubmit = (e) =>{
+    debugger
+    e.preventDefault()
+    this.props.updateProfile(this.props.user.id, this.state)
+  }
+
+  handlePasswordFormSubmit = (e) =>{
+    e.preventDefault()
+    
+  }
+
   render(){
     console.log(this.state);
     const {name,lastname,email,username,picture,password,confirm} = this.state
@@ -53,7 +65,7 @@ class UserAccountDetails extends React.Component{
             <ListGroupItem className="p-3">
               <Row>
                 <Col>
-                  <Form>
+                  <Form onSubtmit={this.handleProfileFormSubmit}>
                     <Row form>
                       {/* First Name */}
                       <Col md="6" className="form-group">
@@ -133,7 +145,7 @@ class UserAccountDetails extends React.Component{
             <ListGroupItem className="p-3">
               <Row>
                 <Col>
-                  <Form>
+                  <Form onSubtmit={this.handlePasswordFormSubmit}>
                   <Row form onSubtmit>
                       {/* Password */}
                       <Col md="6" className="form-group">
@@ -184,7 +196,8 @@ const msp = (state) => {
 
 const mdp = (dispatch) => {
   return{
-
+    updateProfile: (id,profileInfo) =>dispatch(updateProfile(id,profileInfo)),
+    updatePassword: (id,password) => dispatch(updatePassword(id,password))
   }
 }
 
