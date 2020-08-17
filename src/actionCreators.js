@@ -142,12 +142,13 @@ const payAppointment = (appointmentId,servicesId,history)=>dispatch=> {
       color:"#43C924"
     }
     dispatch({type:"PAY_APPOINTMENT",payload:{appointment}})
+    debugger
     history.push("/dashboard")
   })
 }
 
 const updatePassword =(id,password)=>dispatch=>{
-  fetch(`USERS/${id}`,{
+  fetch(`${USERS}//update/password/${id}`,{
     method:"PATCH",
     headers:{
       'Content-Type':'application/json',
