@@ -1,11 +1,21 @@
 
 let appointments = JSON.parse(localStorage.getItem("appointments"))
+let initialServices =[
+  {id:1,description:"Buzz Cut",price:20.0},
+  {id:2,description:"Brush Back with Fade",price:25.0},
+  {id:3,description:"Classic Short Layers",price:25.0},
+  {id:4,description:"Mohawk Fade",price:20.0},
+  {id:5,description:"Skin Fade",price:20.0},
+  {id:6,description:"Shape Up",price:10.0},
+  {id:7,description:"Beard",price:10.0}
+]
 
 const initialState = {
   customers : [],
   user: JSON.parse(localStorage.getItem("user")),
   appointments: appointments? appointments : [],
-  services:[] 
+  appointmentToBePaid:null,
+  services:initialServices
 }
 
 
@@ -13,6 +23,11 @@ const reducer = (prevState = initialState,action) => {
     console.log(action);
     let newAppointmentsArr = null;
     switch (action.type){
+      case "FETCH_APPOINTMENT_TO_BE_PAID":
+        return{...prevState,appointmentToBePaid:action.payload.appointment}
+      case "UPDATE_PROFILE":
+        localStorage.setItem("user",JSON.stringify(action.payload.user))
+        return {...prevState,user:action.payload.user}
       case "PAY_APPOINTMENT":
         newAppointmentsArr = prevState.appointments.map( app =>{
           if(app.id === action.payload.appointment.id){

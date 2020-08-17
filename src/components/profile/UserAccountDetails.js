@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {connect} from "react-redux";
 
 import {
@@ -45,6 +44,7 @@ class UserAccountDetails extends React.Component{
   handleProfileFormSubmit = (e) =>{
     e.preventDefault()
     this.props.updateProfile(this.props.user.id, this.state)
+   
   }
 
   handlePasswordFormSubmit = (e) =>{

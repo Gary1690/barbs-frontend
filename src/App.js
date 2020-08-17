@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./shards-dashboard/styles/shards-dashboards.1.1.0.min.css";
 import Dashboard from './views/Dashboard';
 import Auth from './views/Auth';
+import Payment from './views/Payment';
 import {connect} from "react-redux"
 
 
@@ -25,8 +26,11 @@ function App( props) {
         <Route path="/customers" exact render={(props) =>(user ? <DefaultLayout ><Customer {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
         <Route path="/appointments" exact render={(props) =>(user ? <DefaultLayout ><Appointment {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
         <Route path="/appointments/new/:id" exact render={(props) =>(user ? <DefaultLayout ><Appointment {...props}/></DefaultLayout>:<Redirect to="/auth"/>)}/>
+        <Route path="/payment/:id" exact render={(props) =>(user ?<Payment {...props}/>:<Redirect to="/auth"/>)}/>
         <Route path="*" exact render={(props) =>(<Errors/>)}/>
+
       </Switch>
+      
     </Router>
   )
 }

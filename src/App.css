@@ -84,3 +84,17 @@
   transform: rotate(45deg);
   background: white;
 }
+
+.payment-sumary{
+  width: 70%;
+  border-radius: 5px;
+  background-color: whitesmoke;
+  padding:2em;
+  margin:auto;
+  margin-top:6em;
+}
+
+.increaseFont{
+  font-size: 1.1em;
+  color:grey;
+}

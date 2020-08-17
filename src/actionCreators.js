@@ -1,7 +1,16 @@
+
+
 const API = "http://localhost:3000";
 const CUSTOMERS = `${API}/customers`
 const APPOINTMENTS = `${API}/appointments`
 const USERS = `${API}/users`
+const INVOICES = `${API}/invoices`
+
+
+const fetchAppointemt = (id) =>dispatch => {
+  fetch(`${APPOINTMENTS}/${id}`).then(r=>r.json())
+  .then(appointment => dispatch({type:"FETCH_APPOINTMENT_TO_BE_PAID",payload:{appointment}}))
+}
 
 
 const fetchCustomers = ( ) => dispatch => {
@@ -109,14 +118,17 @@ const deleteAppointment = (id,event)=> dispatch => {
 }
 
 
-const payAppointment = (appointmentId,calendarRef)=>dispatch=> {
-  fetch(`${APPOINTMENTS}/pay/${appointmentId}`,{
-    method:"PATCH",
+const payAppointment = (appointmentId,servicesId,history)=>dispatch=> {
+  fetch(INVOICES,{
+    method:"POST",
     headers:{
       'Content-Type':'application/json',
       'Accept':'application/json'
     },
-    body:JSON.stringify({status:true})
+    body:JSON.stringify({
+      appointment_id:appointmentId,
+      servicesId
+    })
   }).then(r=> r.json())
   .then(app => {
     const appointment = {
@@ -130,7 +142,7 @@ const payAppointment = (appointmentId,calendarRef)=>dispatch=> {
       color:"#43C924"
     }
     dispatch({type:"PAY_APPOINTMENT",payload:{appointment}})
-   
+    history.push("/dashboard")
   })
 }
 
@@ -149,19 +161,21 @@ const updatePassword =(id,password)=>dispatch=>{
 }
 
 const updateProfile =(id,{name,lastname,email,username,picture})=>dispatch=>{
-  fetch(`${USERS}/login`,{
+  const formData = new FormData()
+  formData.append('name',name)
+  formData.append('lastname',lastname)
+  formData.append('email',email)
+  formData.append('username',username)
+  formData.append('picture',picture)
+  console.log(name,lastname,email,username,picture)
+  fetch(`${USERS}/${id}`,{
     method:"PATCH",
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json'
-    },
-    body:JSON.stringify({
-      name,
-      lastname,
-      email,
-      username,
-      picture
-    })
+    // headers:{
+    //   'Content-type':'application/json',
+    //   'Accept':'application/json'
+    // },
+    // body:JSON.stringify({name,lastname,email,username,picture})
+    body:formData
   }).then(r=>r.json())
   .then( user => {
     dispatch({type:"UPDATE_PROFILE",payload:{user}})
@@ -178,5 +192,6 @@ export {
   deleteAppointment,
   payAppointment,
   updateProfile,
-  updatePassword
+  updatePassword,
+  fetchAppointemt
 }

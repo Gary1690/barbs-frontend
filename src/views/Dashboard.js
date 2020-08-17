@@ -99,7 +99,14 @@ class Dashboard extends React.Component {
                     {this.todayAppointments().length > 0 ? 
                     this.todayAppointments().map( (app,index)=>{
                       const customer =  this.props.customers.find(c=> c.id === app.customer_id)
-                      return <RenderTableContent payAppointment={this.props.payAppointment} deleteAppointment={this.props.deleteAppointment} key={app.id} index ={index} {...app} customer={customer}/>
+                      return <RenderTableContent 
+                              payAppointment={this.props.payAppointment} 
+                              deleteAppointment={this.props.deleteAppointment} 
+                              key={app.id} 
+                              index ={index} 
+                              {...app}
+                              history={this.props.history} 
+                              customer={customer}/>
                     })
                     : 
                     <tr> <td colSpan={5} style={{fontSize:"1.5em",textAlign:"center"}}>No Appointments today</td></tr>
@@ -139,7 +146,7 @@ class Dashboard extends React.Component {
 };
 
 const RenderTableContent = (props) => {
-  const {index,customer,start,status} = props
+  const {index,id,customer,start,status} = props
   const date = new Date(start)
   return(
     <tr>
@@ -150,7 +157,7 @@ const RenderTableContent = (props) => {
       <td>{customer && customer.phone}</td>
       <td align="right">
         <Button
-          onClick ={()=>props.payAppointment(props.id,null)} 
+          onClick ={()=>props.history.push(`/payment/${id}`)} 
           outline 
           disabled={!!status}
           className="mb-2 mr-1" 

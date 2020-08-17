@@ -36,7 +36,7 @@ class UserActions extends React.Component {
         <DropdownToggle caret tag={NavLink} className="text-nowrap px-3">
           <img
             className="user-avatar rounded-circle mr-2"
-            src="https://ca.slack-edge.com/T02MD9XTF-U0130BRMJD8-cb4df1a405fd-512"
+            src={user.picture&& user.picture.url}
             alt="User Avatar"
           />{" "}
           <span className="d-none d-md-inline-block">{this.props.user? `${user.name} ${user.lastname}` :"No user"}</span>
