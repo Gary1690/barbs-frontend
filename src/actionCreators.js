@@ -1,10 +1,24 @@
-
+import Swal from 'sweetalert2'
 
 const API = "http://localhost:3000";
 const CUSTOMERS = `${API}/customers`
 const APPOINTMENTS = `${API}/appointments`
 const USERS = `${API}/users`
 const INVOICES = `${API}/invoices`
+
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
+})
+
 
 
 const fetchAppointemt = (id) =>dispatch => {
@@ -31,18 +45,40 @@ const saveCustomer = (customer) => (dispatch) => {
       phone:customer.phone
     })
   }).then(r=>r.json())
-  .then(newCustomer=> dispatch({type:"SAVE_CUSTOMER",payload:{customer:newCustomer,edit:!!customer.id}}))
+  .then(newCustomer=> {
+    dispatch({type:"SAVE_CUSTOMER",payload:{customer:newCustomer,edit:!!customer.id}})
+    Toast.fire({
+      icon: 'success',
+      title: `Customer ${customer.id? "Updated" : "Added"} Successfully`
+    })
+  })
 }
 
 const deleteCustomer = (id)=> dispatch => {
-  fetch(`${CUSTOMERS}/${id}`,{
-    method:"DELETE",
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json'
+  Swal.fire({
+    title:'Delete Customer',
+    text:'Are you sure you want to delete this?',
+    icon:'question',
+    showCancelButton:true
+  }).then((result)=>{
+    if(result.value){
+      fetch(`${CUSTOMERS}/${id}`,{
+        method:"DELETE",
+        headers:{
+          'Content-Type':'application/json',
+          'Accept':'application/json'
+        }
+      }).then(r=>r.json())
+      .then(customer => {
+        dispatch({type:"DELETE_CUSTOMER",payload:{customerId:customer.id}})
+        Toast.fire({
+          icon: 'success',
+          title: `Customer Deleted Successfully`
+        })
+      })
     }
-  }).then(r=>r.json())
-  .then(customer => dispatch({type:"DELETE_CUSTOMER",payload:{customerId:customer.id}}))
+  })
+  
 }
 
 const addAppointment = (appointment) => dispatch =>{
@@ -66,6 +102,10 @@ const addAppointment = (appointment) => dispatch =>{
       color:"#3688D8"
     }
     dispatch({type:"ADD_APPOINTMENT",payload:{appointment}})
+    Toast.fire({
+      icon: 'success',
+      title: `Appointment Added Successfully`
+    })
   })
 }
 
@@ -96,6 +136,10 @@ const login = (userInfo,history) => dispatch =>{
       }) 
       dispatch({type:"LOGIN",payload:{user:userInfo.user,appointments}})
       history.push("/dashboard")
+      Toast.fire({
+        icon: 'success',
+        title: `Welcome Back, ${userInfo.user.name} ${userInfo.user.lastname}`
+      })
     }
     
   })
@@ -104,16 +148,29 @@ const login = (userInfo,history) => dispatch =>{
 const logout = ( ) => ({type:"LOGOUT"})
 
 const deleteAppointment = (id,event)=> dispatch => {
-  fetch(`${APPOINTMENTS}/${id}`,{
-    method:"DELETE",
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json'
+  Swal.fire({
+    title:'Delete Appointment',
+    text:'Are you sure you want to delete this?',
+    icon:'question',
+    showCancelButton:true
+  }).then((result)=>{
+    if(result.value){
+      fetch(`${APPOINTMENTS}/${id}`,{
+        method:"DELETE",
+        headers:{
+          'Content-Type':'application/json',
+          'Accept':'application/json'
+        }
+      }).then(r=> r.json())
+      .then(deletedAppointment=>{
+        event && event.remove()
+        dispatch({type:"DELETE_APPOINTMENT",payload:{appointment:deletedAppointment}})
+        Toast.fire({
+          icon: 'success',
+          title: 'Appointment Deleted Successfully'
+        })
+      })
     }
-  }).then(r=> r.json())
-  .then(deletedAppointment=>{
-    event && event.remove()
-    dispatch({type:"DELETE_APPOINTMENT",payload:{appointment:deletedAppointment}})
   })
 }
 
@@ -142,8 +199,14 @@ const payAppointment = (appointmentId,servicesId,history)=>dispatch=> {
       color:"#43C924"
     }
     dispatch({type:"PAY_APPOINTMENT",payload:{appointment}})
-    debugger
-    history.push("/dashboard")
+    Swal.fire({
+      title:'',
+      text:'Appointment Succesfully Paid',
+      icon:'success'
+    }).then(()=>{
+      history.push("/dashboard")
+    })
+    
   })
 }
 
@@ -158,6 +221,10 @@ const updatePassword =(id,password)=>dispatch=>{
   }).then(r=>r.json())
   .then(user => {
     dispatch({type:"UPDATE_PASSWORD",payload:{user}})
+    Toast.fire({
+      icon: 'success',
+      title: 'Your password was updated successfully'
+    })
   })
 }
 
@@ -180,6 +247,10 @@ const updateProfile =(id,{name,lastname,email,username,picture})=>dispatch=>{
   }).then(r=>r.json())
   .then( user => {
     dispatch({type:"UPDATE_PROFILE",payload:{user}})
+    Toast.fire({
+      icon: 'success',
+      title: 'Your profile was updated successfully'
+    })
   })
 }
 
