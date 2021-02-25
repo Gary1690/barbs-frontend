@@ -4,7 +4,7 @@ import { Row, Col, Card, CardHeader, CardBody, CardFooter, Button } from 'shards
 import {payAppointment} from '../../actionCreators'
 
 const PaymentSummary = (props)=> {
-  const{SelectedServiceIds,services,confirmPayment,appointmentToBePaid,user,payAppointment} = props
+  const{history,SelectedServiceIds,services,confirmPayment,appointmentToBePaid,user,payAppointment} = props
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const startDate =  new Date(appointmentToBePaid.start)
   const endDate =  new Date(appointmentToBePaid.end)
@@ -86,7 +86,7 @@ const PaymentSummary = (props)=> {
             </Col>
             <Col align="right">
                 <Button onClick={()=>{confirmPayment()}} theme="danger" className="mr-1 mb-0">Cancel</Button>
-                <Button onClick={()=>{payAppointment(appointmentToBePaid.id,SelectedServiceIds,)}} theme="success" className="mr-1 mb-0">Confirm & Pay</Button>
+                <Button onClick={()=>{payAppointment(appointmentToBePaid.id,SelectedServiceIds,history)}} theme="success" className="mr-1 mb-0">Confirm & Pay</Button>
             </Col>
           </Row>
         </CardFooter>

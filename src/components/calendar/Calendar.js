@@ -128,7 +128,7 @@ class Calendar extends React.Component {
           && 
           <>
           <Button onClick={()=>this.props.deleteAppointment(eventInfo.event._def.publicId,eventInfo.event)} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="danger">Cancel</Button><br/>
-          <Button onClick={()=>{this.props.history.push(`payment/${eventInfo.event._def.publicId}`)}} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>}
+          <Button onClick={()=>{this.props.history.push(`/payment/${eventInfo.event._def.publicId}`)}} style={{margin:".2em",height:'100%',display:'inline-block',width:"100%"}} theme="success">&nbsp;&nbsp;Pay&nbsp;&nbsp;&nbsp;</Button>}
           <div className="calArrow" data-popper-arrow></div>
           </>
           }

@@ -25,7 +25,6 @@ const PaymentTable = (props)=> {
                     <Col md={6}></Col>
                     <Col  md={5} align="right">
                       <FormSelect onChange={handleChange} value={selected}> 
-                        <option></option>
                         {services&& services.map(s=><option key={s.id} value={s.id}>{s.description}</option>)}
                       </FormSelect>
                     </Col >

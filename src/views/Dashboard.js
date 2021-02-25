@@ -167,6 +167,7 @@ const RenderTableContent = (props) => {
           onClick={()=>props.deleteAppointment(props.id,null)} 
           outline 
           className="mb-2 mr-1" 
+          disabled={!!status}
           theme="danger">Cancel</Button>
       </td>
     </tr>

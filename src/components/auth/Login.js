@@ -59,9 +59,11 @@ class Login  extends React.Component{
                       </Col>
                     </Row>
                     <Row form> 
-                      <Button type="button" onClick={()=>this.props.showSignup(true)}  theme="secondary" className="mb-2 mr-1">&larr; Sign up</Button>
-                      <Button type="button" onClick={()=>this.setState({...initialState})} theme="secondary" className="mb-2 mr-1">Clear</Button>
-                      <Button type="submit" theme="accent" className="mb-2 mr-1">Login</Button>
+                      <Col align="right">
+                        {/* <Button type="button" onClick={()=>this.props.showSignup(true)}  theme="secondary" className="mb-2 mr-1">&larr; Sign up</Button> */}
+                        <Button type="button" onClick={()=>this.setState({...initialState})} theme="secondary" className="mb-2 mr-1">Clear</Button>
+                        <Button type="submit" theme="accent" className="mb-2 mr-1">Login</Button>
+                      </Col>
                     </Row>
                   </Form>
                 </Col>
